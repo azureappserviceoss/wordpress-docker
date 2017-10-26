@@ -67,8 +67,21 @@ chown -R www-data:www-data $HTTPD_LOG_DIR
 apachectl start
 
 update_settings
+
 #Git clone 
-git clone -b "$GIT_BRANCH" "$GIT_REPO" /home/site/wwwroot
+
+if [ ! -d "/home/site/www" ]; then
+  mkdir -p /home/www
+fi
+
+chown -R www-data.www-data /home/www
+chmod -R 775 /home/www
+
+if [ ! -d "/home/site/www/.git" ]; then
+  git clone "$GIT_BRANCH" "$GIT_REPO" /home/www
+else
+  git -C /home/www pull "$GIT_BRANCH"
+fi
 
 
 if [ "${DATABASE_TYPE,,}" = "local" ]; then
